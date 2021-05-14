@@ -2,7 +2,7 @@
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
-echo phpinfo();
+
 define('LARAVEL_START', microtime(true));
 
 /*
