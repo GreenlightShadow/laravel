@@ -8,7 +8,6 @@ use App\Models\User;
 class UserController extends Controller
 {
     public function store(RegisterRequest $request){
-
         $requestData = $request->only(['email', 'password']);
         $requestData['password'] = bcrypt($requestData['password']);
         $user = new User();
@@ -17,5 +16,6 @@ class UserController extends Controller
         $token = $user->createToken('AuthToken')->accessToken;
         $response = ['token' => $token];
         return response($response, 201);
+
     }
 }
