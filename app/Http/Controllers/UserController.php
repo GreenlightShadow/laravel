@@ -11,13 +11,10 @@ class UserController extends Controller
 
         $requestData = $request->only(['email', 'password']);
         $requestData['password'] = bcrypt($requestData['password']);
-
         $user = new User();
         $user->fill($requestData);
         $user->save();
-
         $token = $user->createToken('AuthToken')->accessToken;
-
         $response = ['token' => $token];
         return response($response, 201);
     }
