@@ -14,7 +14,8 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    public function store(RegisterRequest $request){
+    public function store(RegisterRequest $request)
+    {
         $requestData = $request->only(['email', 'password']);
         $user = $this->userService->createUser($requestData);
         $token = $user->createToken('AuthToken')->accessToken;

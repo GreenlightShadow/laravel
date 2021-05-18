@@ -16,14 +16,12 @@ class UserServiceTest extends TestCase
     {
         parent::setUp();
         $this->userService = $this->app->make(UserService::class);
-
     }
-
+    /** @test */
     public function createNewUser()
     {
         $data = ['email' => 'qwert11111y@gmail.com', 'password' => 'Qwerty1235', 'confirm_password' => 'Qwerty1235'];
         $createdUser = $this->userService->createUser($data);
         $this->assertInstanceOf(User::class, $createdUser);
-
     }
 }
