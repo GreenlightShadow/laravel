@@ -20,7 +20,7 @@ class UserController extends Controller
         $user = $this->userService->createUser($requestData);
         $token = $user->createToken('AuthToken')->accessToken;
         $response = ['token' => $token];
-        return response($response, 201);
 
+        return response($response, 201);
     }
 }

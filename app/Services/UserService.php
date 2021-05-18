@@ -11,7 +11,7 @@ class UserService
         $user = new User();
         $user->fill($data);
         $user->save();
-        return $user;
 
+        return $user;
     }
 }
