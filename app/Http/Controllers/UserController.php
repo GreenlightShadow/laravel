@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterRequest;
-use App\Models\User;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
-    public function store(RegisterRequest $request){
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
+    public function store(RegisterRequest $request)
+    {
         $requestData = $request->only(['email', 'password']);
-        $requestData['password'] = bcrypt($requestData['password']);
-        $user = new User();
-        $user->fill($requestData);
-        $user->save();
+        $user = $this->userService->createUser($requestData);
         $token = $user->createToken('AuthToken')->accessToken;
         $response = ['token' => $token];
-        return response($response, 201);
 
+        return response($response, 201);
     }
 }
