@@ -14,8 +14,15 @@ class UpdateUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('email_verified_at');
-            $table->dropColumn('remember_token');
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('email_verified_at');
+            });
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('remember_token');
+            });
+
             $table->string('name')->nullable()->change();
         });
     }
