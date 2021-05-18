@@ -14,10 +14,10 @@ class ReturnRegisterDataTest extends TestCase
     {
         parent::setUp();
         $this->artisan('passport:install');
-
     }
 
-    public function tokenReturning()
+    /** @test */
+    public function registerTest()
     {
         $data = [
             'email' => 'qwerty2@gmail.com',
@@ -27,6 +27,5 @@ class ReturnRegisterDataTest extends TestCase
         $response = $this->post('/api/users', $data);
         $response->assertStatus(201);
         $response->assertJsonStructure(['token']);
-
     }
 }
