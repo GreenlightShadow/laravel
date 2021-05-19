@@ -25,7 +25,7 @@ class ReturnRegisterDataTest extends TestCase
             'confirm_password' => 'Qwerty1235',
         ];
         $response = $this->post('/api/auth/users', $data);
-        $response->assertStatus(201);
+        $response->assertStatus(200);
         $response->assertJsonStructure(['token']);
     }
 
@@ -41,7 +41,7 @@ class ReturnRegisterDataTest extends TestCase
             'password' => $password,
         ];
         $response = $this->post('/api/auth/login', $data);
-        $response->assertStatus(201);
+        $response->assertStatus(200);
         $response->assertJsonStructure(['token']);
     }
 }

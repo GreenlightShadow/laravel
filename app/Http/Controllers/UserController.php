@@ -16,7 +16,7 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    public function store(RegisterRequest $request):object
+    public function store(RegisterRequest $request)
     {
         $requestData = $request->only(['email', 'password']);
         $requestData['password'] = bcrypt($requestData['password']);
@@ -27,7 +27,7 @@ class UserController extends Controller
         return response($response, 201);
     }
 
-    public function login(LoginRequest $request):object
+    public function login(LoginRequest $request)
     {
         $requestData = $request->only(['email', 'password']);
         if(!Auth::attempt($requestData))
@@ -38,6 +38,6 @@ class UserController extends Controller
         $token = Auth::user()->createToken('AuthToken')->accessToken;
         $response = ['token' => $token];
 
-        return response($response, 201);
+        return response($response, 200);
     }
 }
