@@ -6,7 +6,7 @@ use App\Models\User;
 
 class UserService
 {
-    public function createUser($data)
+    public function createUser($data):object
     {
         $user = new User();
         $user->fill($data);
