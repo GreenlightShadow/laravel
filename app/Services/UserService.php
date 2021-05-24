@@ -15,11 +15,10 @@ class UserService
 
         return $user;
     }
-    public function createResetRow($user_id)
+    public function createResetRow($user_id):string
     {
         $reset = ResetPassword::where('user_id', $user_id)->first();
-        if(!$reset)
-        {
+        if(!$reset){
             $reset = new ResetPassword;
         }
         $reset->user_id = $user_id;
@@ -28,7 +27,7 @@ class UserService
 
         return $reset->token;
     }
-    public function updatePassword($checkToken, $password)
+    public function updatePassword($checkToken, $password):object
     {
         $user = User::where('id', $checkToken->user_id)->first();
         $password = bcrypt($password);

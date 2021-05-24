@@ -23,14 +23,12 @@ class PasswordResetController extends Controller
     public function resetPassword(ResetRequest $request)
     {
         $email = $request->only('email');
-        $checkEmail = User::where('email', $email)->first();
-        if ($checkEmail)
-        {
-            $resetToken = $this->userService->createResetRow($checkEmail->id);
-            Mail::to($email)->send(new ResetMail($resetToken, $email));
-
-            return new ResetMail($resetToken, $email);
-        } else return 'Not Found Email';
+        $user = User::where('email', $email)->first();
+        if ($user) {
+            $resetToken = $this->userService->createResetRow($user->id);
+            $response = ['token' => $resetToken, 'email' => $email];
+            return response($response, 200);
+        }
     }
 
     public function updatePassword(UpdateRequest $request)
@@ -39,17 +37,13 @@ class PasswordResetController extends Controller
         $checkToken = ResetPassword::where('token', $requestData['token'])->first();
         $current = Carbon::now();
         $check = DATE_FORMAT($checkToken->created_at, 'Y-m-d H:i:s');
-            if($checkToken)
-            {
-                if($current -> diffInHours($check) < 2 )
-                {
+            if($checkToken){
+                if($current -> diffInHours($check) < 2 ){
                     $user = $this->userService->updatePassword($checkToken, $requestData['password']);
                     $token = $user->createToken('AuthToken')->accessToken;
                     $response = ['token' => $token];
                     $checkToken->delete();
-                }
-                else
-                {
+                }else{
                     $checkToken->delete();
 
                     return response('Token out of date');

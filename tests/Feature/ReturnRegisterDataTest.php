@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ResetMail;
 use App\Models\ResetPassword;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class ReturnRegisterDataTest extends TestCase
@@ -54,14 +56,16 @@ class ReturnRegisterDataTest extends TestCase
         $data = [
             'email' => 'qwerty2@gmail.com',
         ];
-        //Mail::fake();
+        Mail::fake();
         $response = $this->post('/api/auth/reset', $data);
+        Mail::to($user->email)->send(new ResetMail('hrenkjfle3ilhnl43423gblb423', $data['email']));
         $response->assertStatus(200);
-        //Mail::assertSent(ResetMail::class);
+        Mail::assertSent(ResetMail::class);
     }
     /** @test */
     public function updatePasswordTest()
     {
+
         $user = User::factory()->create([
             'id' => '41',
             'email' => 'qwerty2@gmail.com',
