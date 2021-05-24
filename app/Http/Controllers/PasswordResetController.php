@@ -35,20 +35,11 @@ class PasswordResetController extends Controller
     {
         $requestData = $request->only(['token', 'password']);
         $checkToken = ResetPassword::where('token', $requestData['token'])->first();
-        $current = Carbon::now();
-        $check = DATE_FORMAT($checkToken->created_at, 'Y-m-d H:i:s');
-            if($checkToken){
-                if($current -> diffInHours($check) < 2 ){
-                    $user = $this->userService->updatePassword($checkToken, $requestData['password']);
-                    $token = $user->createToken('AuthToken')->accessToken;
-                    $response = ['token' => $token];
-                    $checkToken->delete();
-                }else{
-                    $checkToken->delete();
+        if ($checkToken) {
+            $response = $this->userService->updatePassword($checkToken, $requestData['password']);
 
-                    return response('Token out of date');
-                }
-                return response($response, 201);
-            }
+            return response($response, 200);
+        }
+        return response('coudn\'t find token');
     }
 }
