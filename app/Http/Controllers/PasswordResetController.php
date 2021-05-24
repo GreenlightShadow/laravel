@@ -40,6 +40,6 @@ class PasswordResetController extends Controller
 
             return response($response, 200);
         }
-        return response('coudn\'t find token');
+        return response('Incorrect token', 422);
     }
 }
