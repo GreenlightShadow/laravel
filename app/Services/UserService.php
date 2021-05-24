@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ResetPassword;
 use App\Models\User;
 
 class UserService
@@ -10,6 +11,28 @@ class UserService
     {
         $user = new User();
         $user->fill($data);
+        $user->save();
+
+        return $user;
+    }
+    public function createResetRow($user_id)
+    {
+        $reset = ResetPassword::where('user_id', $user_id)->first();
+        if(!$reset)
+        {
+            $reset = new ResetPassword;
+        }
+        $reset->user_id = $user_id;
+        $reset->token = 'hrenkjfle3ilhnl43423gblb423';
+        $reset->save();
+
+        return $reset->token;
+    }
+    public function updatePassword($checkToken, $password)
+    {
+        $user = User::where('id', $checkToken->user_id)->first();
+        $password = bcrypt($password);
+        $user->password = $password;
         $user->save();
 
         return $user;
