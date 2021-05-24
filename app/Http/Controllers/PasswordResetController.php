@@ -24,9 +24,12 @@ class PasswordResetController extends Controller
     {
         $email = $request->only('email');
         $user = User::where('email', $email)->first();
+
         if ($user) {
             $resetToken = $this->userService->createResetRow($user->id);
             $response = ['token' => $resetToken, 'email' => $email];
+            Mail::to($email)->send(new ResetMail($resetToken, $email));
+
             return response($response, 200);
         }
     }
@@ -35,6 +38,7 @@ class PasswordResetController extends Controller
     {
         $requestData = $request->only(['token', 'password']);
         $checkToken = ResetPassword::where('token', $requestData['token'])->first();
+
         if ($checkToken) {
             $response = $this->userService->updatePassword($checkToken, $requestData['password']);
 

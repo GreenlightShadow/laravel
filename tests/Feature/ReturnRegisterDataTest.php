@@ -55,10 +55,11 @@ class ReturnRegisterDataTest extends TestCase
         ]);
         $data = [
             'email' => 'qwerty2@gmail.com',
+            'token' => 'hrenkjfle3ilhnl43423gblb423'
         ];
         Mail::fake();
         $response = $this->post('/api/auth/reset', $data);
-        Mail::to($user->email)->send(new ResetMail('hrenkjfle3ilhnl43423gblb423', $data['email']));
+        Mail::to($user->email)->send(new ResetMail($data['token'], $data['email']));
         $response->assertStatus(200);
         Mail::assertSent(ResetMail::class);
     }
