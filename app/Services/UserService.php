@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\ResetPassword;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class UserService
 {
@@ -20,7 +21,7 @@ class UserService
     {
         $reset = ResetPassword::where('user_id', $user_id)->first();
 
-        if(!$reset){
+        if(!$reset) {
             $reset = new ResetPassword;
         }
 
@@ -47,5 +48,14 @@ class UserService
         }
 
         return ['message' => 'Outdated token'];
+    }
+    public function updateUser($id, $name, $email)
+    {
+        $user = User::where('id', $id)->first();
+        $user->name = $name;
+        $user->email = $email;
+        $user->save();
+
+        return $user;
     }
 }
