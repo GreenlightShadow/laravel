@@ -49,11 +49,10 @@ class UserService
 
         return ['message' => 'Outdated token'];
     }
-    public function updateUser($id, $name, $email)
+    public function updateUser(int $id, array $data):object
     {
         $user = User::where('id', $id)->first();
-        $user->name = $name;
-        $user->email = $email;
+        $user->fill($data);
         $user->save();
 
         return $user;

@@ -72,11 +72,7 @@ class ReturnRegisterDataTest extends TestCase
             'email' => 'qwerty2@gmail.com',
             'password' => bcrypt($password = 'Qwerty1235')
         ]);
-        $reset = ResetPassword::factory()->create([
-            'user_id' => '41',
-            'token' => 'hrenkjfle3ilhnl43423gblb423',
-            'created_at' => '2021-05-24 11:35:27',
-        ]);
+        $reset = ResetPassword::factory()->create();
         $data = [
             'token' => $reset->token,
             'password' => $password,
@@ -98,7 +94,10 @@ class ReturnRegisterDataTest extends TestCase
         ];
         $this->actingAs($user, 'api');
         $response = $this->put('/api/auth/users/40', $data);
-        $response->assertStatus(201);
+        $response->assertStatus(200);
         $response->assertJsonStructure(['token']);
+        $user->refresh();
+        $this->assertEquals($user->name, $data['name']);
+        $this->assertEquals($user->email, $data['email']);
     }
 }

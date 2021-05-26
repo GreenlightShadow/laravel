@@ -51,14 +51,14 @@ class UserController extends Controller
             return response('error', 404);
         }
         if (Auth::user()->can('update', $user)) {
-            $user = $this->userService->updateUser($request->id, $request->name, $request->email);
+            $user = $this->userService->updateUser($request->id, $request->validated());
         } else {
-            return response('Data cannot be updated', 403);
+            return response('Data can be updated only by account owner', 403);
         }
 
         $token = $user->createToken('AuthToken')->accessToken;
         $response = ['token' => $token];
 
-        return response($response, 201);
+        return response($response, 200);
     }
 }
