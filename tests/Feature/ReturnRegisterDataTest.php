@@ -27,7 +27,7 @@ class ReturnRegisterDataTest extends TestCase
             'password' => 'Qwerty1235',
             'confirm_password' => 'Qwerty1235',
         ];
-        $response = $this->post('/api/auth/users', $data);
+        $response = $this->post('/api/users', $data);
         $response->assertStatus(201);
         $response->assertJsonStructure(['token']);
     }
@@ -43,7 +43,7 @@ class ReturnRegisterDataTest extends TestCase
             'email' => $user->email,
             'password' => $password,
         ];
-        $response = $this->post('/api/auth/login', $data);
+        $response = $this->post('/api/login', $data);
         $response->assertStatus(200);
         $response->assertJsonStructure(['token']);
     }
@@ -58,7 +58,7 @@ class ReturnRegisterDataTest extends TestCase
             'token' => 'hrenkjfle3ilhnl43423gblb423'
         ];
         Mail::fake();
-        $response = $this->post('/api/auth/reset', $data);
+        $response = $this->post('/api/reset', $data);
         Mail::to($user->email)->send(new ResetMail($data['token'], $data['email']));
         $response->assertStatus(200);
         Mail::assertSent(ResetMail::class);
@@ -72,16 +72,32 @@ class ReturnRegisterDataTest extends TestCase
             'email' => 'qwerty2@gmail.com',
             'password' => bcrypt($password = 'Qwerty1235')
         ]);
-        $reset = ResetPassword::factory()->create([
-            'user_id' => '41',
-            'token' => 'hrenkjfle3ilhnl43423gblb423',
-            'created_at' => '2021-05-24 11:35:27',
-        ]);
+        $reset = ResetPassword::factory()->create();
         $data = [
             'token' => $reset->token,
             'password' => $password,
             ];
-        $response = $this->post('/api/auth/update', $data);
+        $response = $this->post('/api/update', $data);
         $response->assertStatus(200);
+    }
+    /** @test */
+    public function updateTest()
+    {
+        $user = User::factory()->create([
+            'id' => 40,
+            'name' => 'Qwertyqweqwe',
+            'email' => 'qwerty2@gmail.com',
+        ]);
+        $data = [
+            'name' => 'Qrreewert',
+            'email' => 'qwerty112@gmail.com',
+        ];
+        $this->actingAs($user, 'api');
+        $response = $this->put('/api/auth/users/40', $data);
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['token']);
+        $user->refresh();
+        $this->assertEquals($user->name, $data['name']);
+        $this->assertEquals($user->email, $data['email']);
     }
 }
