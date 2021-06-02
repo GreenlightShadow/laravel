@@ -119,5 +119,6 @@ class ReturnRegisterDataTest extends TestCase
         $response = $this->get('/api/auth/users/40');
         $response->assertStatus(200);
         $response->assertJsonStructure(['users']);
+
     }
 }
