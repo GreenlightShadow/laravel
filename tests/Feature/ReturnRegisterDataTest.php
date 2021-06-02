@@ -27,7 +27,7 @@ class ReturnRegisterDataTest extends TestCase
             'password' => 'Qwerty1235',
             'confirm_password' => 'Qwerty1235',
         ];
-        $response = $this->post('/api/users', $data);
+        $response = $this->post('/api/register', $data);
         $response->assertStatus(201);
         $response->assertJsonStructure(['token']);
     }
@@ -93,11 +93,31 @@ class ReturnRegisterDataTest extends TestCase
             'email' => 'qwerty112@gmail.com',
         ];
         $this->actingAs($user, 'api');
-        $response = $this->put('/api/auth/users/40', $data);
+        $response = $this->put('/api/auth/update/40', $data);
         $response->assertStatus(200);
         $response->assertJsonStructure(['token']);
         $user->refresh();
         $this->assertEquals($user->name, $data['name']);
         $this->assertEquals($user->email, $data['email']);
+    }
+    /** @test */
+    public function getUsersTest()
+    {
+        User::factory()->count(3)->create();
+        $response = $this->get('/api/users');
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['users']);
+    }
+    public function getUserDataTest()
+    {
+        $user = User::factory()->create([
+            'id' => 40,
+            'name' => 'Qwertyqweqwe',
+            'email' => 'qwerty2@gmail.com',
+        ]);
+        $this->actingAs($user, 'api');
+        $response = $this->get('/api/auth/users/40');
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['users']);
     }
 }

@@ -61,4 +61,25 @@ class UserController extends Controller
 
         return response($response, 200);
     }
+    public function getUsers(){
+        $users = User::all();
+        $email = $users->pluck('email');
+        $response = ['users' => $email];
+
+        return response($response, 200);
+    }
+    public function getUserData()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response('not logged', 403);
+        }
+        if ($user->id == request()->route('id')) {
+            $response = ['user' => $user];
+
+            return response($response, 200);
+        } else {
+            return response('You are not owner of this data', 403);
+        }
+    }
 }

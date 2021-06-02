@@ -17,10 +17,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::post('/users', [UserController::class, 'store'])->name('store');
+Route::post('/register', [UserController::class, 'store'])->name('store');
+Route::get('/users', [UserController::class, 'getUsers'])->name('get-users');
 Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::post('/reset', [PasswordResetController::class, 'resetPassword'])->name('resetPassword');
 Route::post('/update', [PasswordResetController::class, 'updatePassword'])->name('updatePassword');
 
 
-Route::middleware('auth:api')->put('auth/users/{id}', [UserController::class, 'update'])->name('update');
+Route::middleware('auth:api')->put('auth/update/{id}', [UserController::class, 'update'])->name('update');
+Route::middleware('auth:api')->get('auth/users/{id}', [UserController::class, 'getUserData'])->name('get-user-data');
