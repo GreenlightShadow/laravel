@@ -103,7 +103,7 @@ class ReturnRegisterDataTest extends TestCase
     public function getUsersTest()
     {
         $count = 5;
-        $users = User::factory()->count($count)->create([]);
+        $users = User::factory()->count($count)->create();
         $user = $users->first();
         $this->actingAs($user, 'api');
         $response = $this->get('/api/auth/users');
@@ -111,8 +111,20 @@ class ReturnRegisterDataTest extends TestCase
         $response->assertJsonStructure(['users']);
         $this->assertCount($count, $users);
     }
+    /** @test */
     public function getUserDataTest()
     {
+        $user = User::factory()->create([
+            'name' => 'Qwertyqweqwe',
+            'email' => 'qwerty2@gmail.com',
+        ]);
+        $this->actingAs($user, 'api');
+        $response = $this->get('/api/auth/users/'.$user->id);
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['user']);
+    }
+    /** @test */
+    public function rejectGetUserData(){
         $user = User::factory()->create([
             'name' => 'Qwertyqweqwe',
             'email' => 'qwerty2@gmail.com',
@@ -121,11 +133,6 @@ class ReturnRegisterDataTest extends TestCase
             'name' => 'Qwertyqw33321we',
             'email' => 'q1112werty2@gmail.com',
         ]);
-        $this->actingAs($user, 'api');
-        $response = $this->get('/api/auth/users/'.$user->id);
-        $response->assertStatus(200);
-        $response->assertJsonStructure(['users']);
-
         $this->actingAs($anotherUser, 'api');
         $response = $this->get('/api/auth/users/'.$user->id);
         $response->assertStatus(403);

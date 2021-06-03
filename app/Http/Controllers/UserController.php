@@ -8,7 +8,9 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
@@ -72,12 +74,12 @@ class UserController extends Controller
         return response($response, 200);
     }
 
-    public function getUserData()
+    public function getUserData(Request $request, $userId)
     {
-        $user = User::findOrFail(request()->route('id'));
+        $user = User::find($userId);
         if($user) {
-            if (Auth::user()->can('view', $user)) {
-                $response = ['user' => UserResource::collection(User::all())];
+            if ($request->user()->can('view', $user)) {
+                $response = ['user' => UserResource::collection(User::where('id', $userId)->get())];
                 return response($response, 200);
             } else {
                 return response('You are not owner of this data', 403);
