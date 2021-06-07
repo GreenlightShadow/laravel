@@ -137,4 +137,24 @@ class ReturnRegisterDataTest extends TestCase
         $response = $this->get('/api/auth/users/'.$user->id);
         $response->assertStatus(403);
     }
+
+    /** @test */
+    public function sendMessageTest()
+    {
+        $user = User::factory()->create([
+            'name' => 'Qwertyqweqwe',
+            'email' => 'qwerty2@gmail.com',
+        ]);
+        $anotherUser = User::factory()->create([
+            'name' => 'Qwertyqw33321we',
+            'email' => 'q1112werty2@gmail.com',
+        ]);
+        $data = [
+            'email' => $anotherUser->email,
+            'message' => 'Hello world',
+        ];
+        $this->actingAs($user, 'api');
+        $response = $this->post('/api/auth/messages/', $data);
+        $response->assertStatus(201);
+    }
 }
