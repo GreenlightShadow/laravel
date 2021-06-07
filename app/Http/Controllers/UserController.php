@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
@@ -43,6 +46,7 @@ class UserController extends Controller
 
         return response($response, 200);
     }
+
     public function update(UpdateUserRequest $request)
     {
         $user = User::where('id', $request->id)->first();
@@ -55,10 +59,33 @@ class UserController extends Controller
         } else {
             return response('Data can be updated only by account owner', 403);
         }
-
         $token = $user->createToken('AuthToken')->accessToken;
         $response = ['token' => $token];
 
         return response($response, 200);
+    }
+
+    public function getUsers()
+    {
+        $users = User::all();
+        $email = $users->pluck('email');
+        $response = ['users' => $email];
+
+        return response($response, 200);
+    }
+
+    public function getUserData(Request $request, $userId)
+    {
+        $user = User::find($userId);
+        if($user) {
+            if ($request->user()->can('view', $user)) {
+                $response = ['user' => UserResource::collection(User::where('id', $userId)->get())];
+                return response($response, 200);
+            } else {
+                return response('You are not owner of this data', 403);
+            }
+        } else {
+            return response('Not Found', 404);
+        }
     }
 }

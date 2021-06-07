@@ -6,7 +6,6 @@ use App\Http\Requests\ResetRequest;
 use App\Http\Requests\UpdateRequest;
 use App\Models\ResetPassword;
 use App\Services\UserService;
-use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetMail;
