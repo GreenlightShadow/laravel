@@ -45,7 +45,7 @@ class MessageController extends Controller
     public function store(Request $request)
     {
         $userTo = User::where('email', $request->email)->first();
-        $userFrom = Auth::user();
+        $userFrom = $request->user();
         if($userTo && $userFrom) {
             $message = $this->messageService->createMessage($userTo, $userFrom, $request->message);
             if($message) {
