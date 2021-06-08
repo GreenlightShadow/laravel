@@ -4,10 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use App\Models\User;
+use App\Services\MessageService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
+    protected $messageService;
+
+    public function __construct(MessageService $messageService)
+    {
+        $this->messageService = $messageService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -36,11 +44,13 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
-        $message = new Message();
         $userTo = User::where('email', $request->email)->first();
-        if($userTo) {
-            $message->createMessage($userTo, $request->message);
-            return response('Success', 201);
+        $userFrom = Auth::user();
+        if($userTo && $userFrom) {
+            $message = $this->messageService->createMessage($userTo, $userFrom, $request->message);
+            if($message) {
+                return response('Success', 201);
+            } else return response('message error', 403);
         } else {
             return response('Can\'t find user', 403);
         }

@@ -14,13 +14,4 @@ class Message extends Model
         'from_user',
         'message',
     ];
-
-    public function createMessage($userTo, $message){
-        $this->to_user = $userTo->id;
-        $this->from_user = Auth::id();
-        $this->message = $message;
-        $this->save();
-
-        return true;
-    }
 }
