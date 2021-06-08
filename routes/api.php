@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -23,6 +24,12 @@ Route::post('/reset', [PasswordResetController::class, 'resetPassword'])->name('
 Route::post('/update', [PasswordResetController::class, 'updatePassword'])->name('updatePassword');
 
 
-Route::middleware('auth:api')->put('auth/update/{id}', [UserController::class, 'update'])->name('update');
-Route::middleware('auth:api')->get('auth/users', [UserController::class, 'getUsers'])->name('get-users');
-Route::middleware('auth:api')->get('auth/users/{id}', [UserController::class, 'getUserData'])->name('get-user-data');
+Route::middleware('auth:api')->group(function ()
+{
+    Route::group(['prefix' => 'auth'], function(){
+        Route::put('update/{id}', [UserController::class, 'update'])->name('update');
+        Route::get('users', [UserController::class, 'getUsers'])->name('get-users');
+        Route::get('users/{id}', [UserController::class, 'getUserData'])->name('get-user-data');
+        Route::resource('messages', MessageController::class);
+    });
+});
