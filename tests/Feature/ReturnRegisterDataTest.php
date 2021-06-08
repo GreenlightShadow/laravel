@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Mail\ResetMail;
+use App\Models\Message;
 use App\Models\ResetPassword;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -156,5 +157,26 @@ class ReturnRegisterDataTest extends TestCase
         $this->actingAs($user, 'api');
         $response = $this->post('/api/auth/messages/', $data);
         $response->assertStatus(201);
+    }
+
+    /** @test */
+    public function getMessageTest()
+    {
+        $userCount = 2;
+        $messageCount = 5;
+        $users = User::factory()->count($userCount)->create();
+        $user = $users->first();
+        $messages = Message::factory()->count($messageCount)->create([
+            'to_user' => $user->id,
+            'from_user' => $userCount,
+        ]);
+        Message::factory()->count(7)->create([
+            'to_user' => !$user->id,
+            'from_user' => $userCount,
+        ]);
+        $this->actingAs($user, 'api');
+        $response = $this->get('/api/auth/messages/');
+        $response->assertStatus(200);
+        $this->assertCount($messageCount, $messages);
     }
 }
