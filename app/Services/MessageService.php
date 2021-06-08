@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MessageService
 {
-    public function createMessage(object $userTo, object $userFrom, string $text):object
+    public function createMessage(User $userTo, User $userFrom, string $text):Message
     {
         $message = new Message();
         $message->to_user = $userTo->id;
