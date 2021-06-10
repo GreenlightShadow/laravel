@@ -191,8 +191,6 @@ class ReturnRegisterDataTest extends TestCase
         $this->actingAs($user, 'api');
         Mail::fake();
         $response = $this->get('/api/auth/delete/'.$user->id);
-        $pdf = App::make('dompdf.wrapper');
-        Mail::to($user->email)->send(new DeleteMail($pdf));
         $response->assertStatus(200);
         Mail::assertSent(DeleteMail::class);
         $user->refresh();
