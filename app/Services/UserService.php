@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Mail\DeleteMail;
 use App\Models\ResetPassword;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Mail;
 
 class UserService
 {
@@ -56,5 +58,15 @@ class UserService
         $user->save();
 
         return $user;
+    }
+    public function deleteUser(User $user):bool
+    {
+        $user->status = User::DISABLED;
+        $user->update();
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadHTML('<h1>You have been deleted yourself</h1>');
+        Mail::to($user->email)->send(new DeleteMail($pdf));
+
+        return true;
     }
 }
