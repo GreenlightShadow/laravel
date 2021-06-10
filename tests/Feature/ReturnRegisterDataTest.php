@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Mail\DeleteMail;
 use App\Mail\ResetMail;
 use App\Models\Message;
 use App\Models\ResetPassword;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -178,5 +180,22 @@ class ReturnRegisterDataTest extends TestCase
         $response = $this->get('/api/auth/messages/');
         $response->assertStatus(200);
         $this->assertCount($messageCount, $messages);
+    }
+    /** @test */
+    public function deleteUserTest()
+    {
+        $user = User::factory()->create([
+            'email' => 'qwerty2@gmail.com',
+            'status' => User::ENABLED,
+        ]);
+        $this->actingAs($user, 'api');
+        Mail::fake();
+        $response = $this->get('/api/auth/delete/'.$user->id);
+        $pdf = App::make('dompdf.wrapper');
+        Mail::to($user->email)->send(new DeleteMail($pdf));
+        $response->assertStatus(200);
+        Mail::assertSent(DeleteMail::class);
+        $user->refresh();
+        $this->assertEquals($user->status, User::DISABLED);
     }
 }

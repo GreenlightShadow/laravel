@@ -6,10 +6,13 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Mail\DeleteMail;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 
 class UserController extends Controller
@@ -67,7 +70,7 @@ class UserController extends Controller
 
     public function getUsers()
     {
-        $users = User::all();
+        $users = User::where('status', User::ENABLED)->get();
         $email = $users->pluck('email');
         $response = ['users' => $email];
 
@@ -83,6 +86,20 @@ class UserController extends Controller
                 return response($response, 200);
             } else {
                 return response('You are not owner of this data', 403);
+            }
+        } else {
+            return response('Not Found', 404);
+        }
+    }
+    public function deleteUser(Request $request, $userId)
+    {
+        $user = User::find($userId);
+        if ($user) {
+            if ($request->user()->can('delete', $user)) {
+                $this->userService->deleteUser($user);
+                return response('Deletion success', 200);
+            } else {
+                return response('You are not this user', 403);
             }
         } else {
             return response('Not Found', 404);
